@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import NextAuthSessionProvider from "@/providers/sessionProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,7 +17,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} text-zinc-50 bg-zinc-950 bg-pattern bg-cover bg-no-repeat bg-center py-4 px-2`}>{children}</body>
+      <body
+        className={`${inter.className} text-zinc-50 bg-zinc-950 bg-pattern bg-cover bg-no-repeat bg-center py-4 px-2`}
+      >
+        <NextAuthSessionProvider>{children}</NextAuthSessionProvider>
+      </body>
     </html>
   );
 }

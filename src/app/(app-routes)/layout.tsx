@@ -14,5 +14,9 @@ export default async function PrivateLayout({ children }: PrivateLayoutProps) {
     redirect("/");
   }
 
-  return <>{children}</>
+  return (
+    <>
+      {children}
+    </>
+  );
 }

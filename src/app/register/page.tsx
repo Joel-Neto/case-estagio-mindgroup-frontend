@@ -1,13 +1,48 @@
-import { AtSign, LockKeyhole, User } from "lucide-react";
-import { Metadata } from "next";
-import Link from "next/link";
-import React from "react";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Área de cadastro",
-};
+import { AtSign, LockKeyhole, User } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React, { SyntheticEvent, useRef, useState } from "react";
 
 export default function Register() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const form = useRef<HTMLFormElement>(null);
+  const router = useRouter();
+
+  const handleSubmit = async (event: SyntheticEvent) => {
+    event.preventDefault();
+
+    const user = {
+      name,
+      email,
+      password,
+    };
+
+    try {
+      const response = await fetch("http://localhost:3002/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+      });
+      if (response.ok) {
+        const apiData = await response.json();
+        if (form.current) {
+          form.current.reset();
+        }
+        router.replace("/");
+      } else {
+        console.error("Erro ao criar usuário:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Erro ao  criar usuário:", error);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="bg-zinc-900 w-[640px] rounded-xl py-5 px-4 shadow-shape space-y-5 sm:px-6">
@@ -25,7 +60,7 @@ export default function Register() {
           </p>
         </div>
 
-        <form className="space-y-3">
+        <form className="space-y-3" onSubmit={handleSubmit} ref={form}>
           <div className="h-14 px-4 flex items-center flex-1  gap-2 bg-zinc-950 border border-zinc-800 rounded-lg">
             <User className="ml-1 text-zinc-400 size-5" />
             <input
@@ -33,6 +68,8 @@ export default function Register() {
               name="name"
               placeholder="Digite seu nome"
               className="bg-transparent text-lg placeholder-zinc-400 w-40 outline-none flex-1"
+              onChange={(ev) => setName(ev.target.value)}
+              required
             />
           </div>
 
@@ -43,6 +80,8 @@ export default function Register() {
               name="email"
               placeholder="Digite seu e-mail"
               className="bg-transparent text-lg placeholder-zinc-400 w-40 outline-none flex-1"
+              onChange={(ev) => setEmail(ev.target.value)}
+              required
             />
           </div>
 
@@ -53,6 +92,8 @@ export default function Register() {
               name="password"
               placeholder="Digite sua senha"
               className="bg-transparent text-lg placeholder-zinc-400 w-40 outline-none flex-1"
+              onChange={(ev) => setPassword(ev.target.value)}
+              required
             />
           </div>
 

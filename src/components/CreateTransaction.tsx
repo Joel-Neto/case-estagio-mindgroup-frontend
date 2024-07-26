@@ -9,7 +9,7 @@ import "react-datepicker/dist/react-datepicker.css";
 
 interface CreateTransactionProps {
   token: string;
-  idUser: number;
+  idUser: string;
 }
 
 interface Category {

@@ -83,12 +83,12 @@ export default function TransactionsTableWithFilter({
 
   return (
     <>
-      <div className="flex">
+      <div className="flex flex-col gap-4 sm:flex-row">
         <div className="px-4 flex items-center gap-4 text-zinc-400">
           <input
             type="radio"
-            id="todas"
-            name="tipo"
+            id="all"
+            name="type"
             value="todas"
             checked={filter === "todas"}
             onChange={() => handleTransactionTypeChange("todas")}
@@ -96,13 +96,13 @@ export default function TransactionsTableWithFilter({
             required
             aria-label="Todas transações"
           />
-          <label htmlFor="todas">Todas</label>
+          <label htmlFor="all">Todas</label>
         </div>
         <div className="px-4 flex items-center gap-4 text-zinc-400">
           <input
             type="radio"
-            id="receita"
-            name="tipo"
+            id="income"
+            name="type"
             value="receita"
             checked={filter === "receita"}
             onChange={() => handleTransactionTypeChange("receita")}
@@ -110,13 +110,13 @@ export default function TransactionsTableWithFilter({
             required
             aria-label="Receita"
           />
-          <label htmlFor="receita">Receita</label>
+          <label htmlFor="income">Receita</label>
         </div>
         <div className="px-4 flex items-center gap-4 text-zinc-400">
           <input
             type="radio"
-            id="despesa"
-            name="tipo"
+            id="expense"
+            name="type"
             value="despesa"
             checked={filter === "despesa"}
             onChange={() => handleTransactionTypeChange("despesa")}
@@ -124,7 +124,7 @@ export default function TransactionsTableWithFilter({
             required
             aria-label="Despesa"
           />
-          <label htmlFor="despesa">Despesa</label>
+          <label htmlFor="expense">Despesa</label>
         </div>
       </div>
 

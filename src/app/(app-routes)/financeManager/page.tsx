@@ -15,7 +15,7 @@ export default async function FinanceManager() {
       <div className="container max-w-6xl mx-auto px-1 py-10 space-y-6">
         <Header /> 
 
-        <CreateTransaction token={token as string} idUser={userId as number} />
+        <CreateTransaction token={token as string} idUser={userId as string} />
 
         <ShowTransactionsData />
       </div>

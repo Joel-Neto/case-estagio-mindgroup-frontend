@@ -56,7 +56,6 @@ export default async function ShowTransactionsData() {
         </div>
       </div>
 
-      {/* <TransactionsTable /> */}
       <TransactionsTableWithFilter token={token as string} userId={userId as string}/>
     </main>
   );

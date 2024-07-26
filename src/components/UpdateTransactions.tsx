@@ -7,24 +7,24 @@ import DatePicker from "react-datepicker";
 interface UpdateTransactionsProps {
   userId: number;
   token: string;
-  transactionId: number;
+  transactionId: string; // Alterado para string para UUID
   closeModal: () => void;
 }
 
 interface Category {
-  id: number;
+  id: string; // Alterado para string para UUID
   nome: string;
   tipo: "receita" | "despesa";
 }
 
 interface Transaction {
-  id: number;
+  id: string; // Alterado para string para UUID
   description: string;
   amount: number;
   type: "receita" | "despesa";
   date: Date;
   category: {
-    id: number;
+    id: string; // Alterado para string para UUID
     nome: string;
     tipo: "receita" | "despesa";
   };
@@ -40,7 +40,7 @@ export default function UpdateTransactions({
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | undefined>(undefined);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | "">(""); // Alterado para string
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [transactionType, setTransactionType] = useState<"receita" | "despesa">("receita");
   const router = useRouter();
@@ -106,7 +106,7 @@ export default function UpdateTransactions({
   }, [token, router, transactionId]);
 
   const handleCategoryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedCategoryId(parseInt(event.target.value, 10));
+    setSelectedCategoryId(event.target.value);
   };
 
   const handleTransactionTypeChange = (type: "receita" | "despesa") => {
@@ -119,6 +119,11 @@ export default function UpdateTransactions({
 
   const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
+
+    if (!description || !amount || selectedCategoryId === "" || !selectedDate) {
+      alert("Por favor, preencha todos os campos.");
+      return;
+    }
 
     const updatedTransaction = {
       id: transactionId,
@@ -173,7 +178,7 @@ export default function UpdateTransactions({
         <div className="space-y-2">
           <div className="flex justify-between">
             <h2 className="text-2xl font-semibold text-zinc-100">
-              Atualizar Transação {transactionId && `#${transactionId}`}
+              Atualizar Transação
             </h2>
             <button onClick={closeModal}>
               <X className="size-5 text-zinc-400 transition duration-200 hover:text-zinc-200" />
@@ -182,7 +187,7 @@ export default function UpdateTransactions({
         </div>
 
         <form className="space-y-3" onSubmit={handleSubmit}>
-          <div className="h-14 px-4 flex items-center flex-1  gap-2 bg-zinc-950 border border-zinc-800 rounded-lg">
+          <div className="h-14 px-4 flex items-center flex-1 gap-2 bg-zinc-950 border border-zinc-800 rounded-lg">
             <Text className="ml-1 text-zinc-400 size-5" />
             <input
               type="text"
@@ -195,7 +200,7 @@ export default function UpdateTransactions({
             />
           </div>
 
-          <div className="h-14 px-4 flex items-center flex-1  gap-2 bg-zinc-950 border border-zinc-800 rounded-lg">
+          <div className="h-14 px-4 flex items-center flex-1 gap-2 bg-zinc-950 border border-zinc-800 rounded-lg">
             <DollarSign className="ml-1 text-zinc-400 size-5" />
             <input
               type="number"
@@ -213,9 +218,9 @@ export default function UpdateTransactions({
             <List className="ml-1 text-zinc-400 size-5" />
             <select
               name="category"
-              value={selectedCategoryId || ''}
+              value={selectedCategoryId}
               onChange={handleCategoryChange}
-              className="bg-zinc-950 text-zinc-400 text-lg placeholder-zinc-400 w-40 outline-none flex-1  rounded-lg"
+              className="bg-zinc-950 text-zinc-400 text-lg placeholder-zinc-400 w-40 outline-none flex-1 rounded-lg"
               required
             >
               <option value="">Escolha uma categoria</option>

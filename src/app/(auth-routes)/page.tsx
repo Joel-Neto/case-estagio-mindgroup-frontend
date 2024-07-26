@@ -57,6 +57,7 @@ export default function Home() {
               placeholder="Digite seu e-mail"
               className="bg-transparent text-lg placeholder-zinc-400 w-40 outline-none flex-1"
               onChange={(ev) => setEmail(ev.target.value)}
+              required
             />
           </div>
 
@@ -68,6 +69,7 @@ export default function Home() {
               placeholder="Digite sua senha"
               className="bg-transparent text-lg placeholder-zinc-400 w-40 outline-none flex-1"
               onChange={(ev) => setPassword(ev.target.value)}
+              required
             />
           </div>
 

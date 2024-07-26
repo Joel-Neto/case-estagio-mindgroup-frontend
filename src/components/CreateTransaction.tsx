@@ -13,7 +13,7 @@ interface CreateTransactionProps {
 }
 
 interface Category {
-  id: number;
+  id: string; // Altere para string para UUID
   nome: string;
   tipo: "receita" | "despesa";
 }
@@ -22,17 +22,12 @@ export default function CreateTransaction({
   token,
   idUser,
 }: CreateTransactionProps) {
-  const [isTransactionCreatorOpen, setIsTransactionCreatorOpen] =
-    useState(false);
+  const [isTransactionCreatorOpen, setIsTransactionCreatorOpen] = useState(false);
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<
-    number | undefined
-  >();
-  const [transactionType, setTransactionType] = useState<"receita" | "despesa">(
-    "receita"
-  );
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | "">("");
+  const [transactionType, setTransactionType] = useState<"receita" | "despesa">("receita");
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const form = useRef<HTMLFormElement>(null);
   const router = useRouter();
@@ -48,17 +43,12 @@ export default function CreateTransaction({
         });
         if (response.ok) {
           const apiData = await response.json();
+          console.log("Categorias recebidas:", apiData.data); // Adicione este log
           setCategories(apiData.data);
         } else {
           if (response.status === 401) {
-            console.log(
-              "Usuário não autorizado. Redirecionando para o login..."
-            );
-
-            await signOut({
-              redirect: false,
-            });
-
+            console.log("Usuário não autorizado. Redirecionando para o login...");
+            await signOut({ redirect: false });
             router.replace("/");
           } else {
             console.error("Erro ao buscar categorias:", response.statusText);
@@ -72,19 +62,17 @@ export default function CreateTransaction({
     getCategories();
   }, [token, router]);
 
-  function openTransactionCreator() {
+  const openTransactionCreator = () => {
     setIsTransactionCreatorOpen(true);
-  }
+  };
 
-  function closeTransactionCreator() {
+  const closeTransactionCreator = () => {
     setIsTransactionCreatorOpen(false);
-  }
+  };
 
-  const handleCategoryChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    console.log(event.target.value);
-    setSelectedCategoryId(parseInt(event.target.value));
+  const handleCategoryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = event.target.value;
+    setSelectedCategoryId(value === "" ? "" : value);
   };
 
   const handleTransactionTypeChange = (type: "receita" | "despesa") => {
@@ -98,7 +86,7 @@ export default function CreateTransaction({
   const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
 
-    if (!description || !amount || !selectedCategoryId || !selectedDate) {
+    if (!description || !amount || selectedCategoryId === "" || !selectedDate) {
       alert("Por favor, preencha todos os campos.");
       return;
     }
@@ -109,7 +97,7 @@ export default function CreateTransaction({
       type: transactionType,
       date: selectedDate,
       idCategory: selectedCategoryId,
-      idUser: idUser,
+      idUser,
     };
 
     try {
@@ -132,18 +120,14 @@ export default function CreateTransaction({
       } else {
         if (response.status === 401) {
           console.log("Usuário não autorizado. Redirecionando para o login...");
-
-          await signOut({
-            redirect: false,
-          });
-
+          await signOut({ redirect: false });
           router.replace("/");
         } else {
           console.error("Erro ao criar transação:", response.statusText);
         }
       }
     } catch (error) {
-      console.error("Erro ao  criar transação:", error);
+      console.error("Erro ao criar transação:", error);
     }
   };
 
@@ -153,7 +137,6 @@ export default function CreateTransaction({
         <h2 className="text-3xl font-semibold text-center md:text-start">
           Transações Financeiras
         </h2>
-
         <button
           onClick={openTransactionCreator}
           className="button button-primary button-default"
@@ -178,7 +161,7 @@ export default function CreateTransaction({
             </div>
 
             <form className="space-y-3" onSubmit={handleSubmit} ref={form}>
-              <div className="h-14 px-4 flex items-center flex-1  gap-2 bg-zinc-950 border border-zinc-800 rounded-lg">
+              <div className="h-14 px-4 flex items-center flex-1 gap-2 bg-zinc-950 border border-zinc-800 rounded-lg">
                 <Text className="ml-1 text-zinc-400 size-5" />
                 <input
                   type="text"
@@ -190,7 +173,7 @@ export default function CreateTransaction({
                 />
               </div>
 
-              <div className="h-14 px-4 flex items-center flex-1  gap-2 bg-zinc-950 border border-zinc-800 rounded-lg">
+              <div className="h-14 px-4 flex items-center flex-1 gap-2 bg-zinc-950 border border-zinc-800 rounded-lg">
                 <DollarSign className="ml-1 text-zinc-400 size-5" />
                 <input
                   type="number"
@@ -207,9 +190,9 @@ export default function CreateTransaction({
                 <List className="ml-1 text-zinc-400 size-5" />
                 <select
                   name="category"
-                  value={selectedCategoryId}
+                  value={selectedCategoryId || ""}
                   onChange={handleCategoryChange}
-                  className="bg-zinc-950 text-zinc-400 text-lg placeholder-zinc-400 w-40 outline-none flex-1  rounded-lg"
+                  className="bg-zinc-950 text-zinc-400 text-lg placeholder-zinc-400 w-40 outline-none flex-1 rounded-lg"
                   required
                 >
                   <option value="">Escolha uma categoria</option>
@@ -251,7 +234,7 @@ export default function CreateTransaction({
                   type="radio"
                   id="entrada"
                   name="tipo"
-                  value="entrada"
+                  value="receita"
                   checked={transactionType === "receita"}
                   onChange={() => handleTransactionTypeChange("receita")}
                   className="appearance-none h-5 w-5 border border-zinc-800 rounded-md checked:bg-zinc-500 checked:border-transparent focus:outline-none"

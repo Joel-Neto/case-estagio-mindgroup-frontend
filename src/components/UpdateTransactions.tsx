@@ -5,26 +5,26 @@ import React, { SyntheticEvent, useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 
 interface UpdateTransactionsProps {
-  userId: number;
+  userId: string;
   token: string;
-  transactionId: string; // Alterado para string para UUID
+  transactionId: string;
   closeModal: () => void;
 }
 
 interface Category {
-  id: string; // Alterado para string para UUID
+  id: string;
   nome: string;
   tipo: "receita" | "despesa";
 }
 
 interface Transaction {
-  id: string; // Alterado para string para UUID
+  id: string;
   description: string;
   amount: number;
   type: "receita" | "despesa";
   date: Date;
   category: {
-    id: string; // Alterado para string para UUID
+    id: string;
     nome: string;
     tipo: "receita" | "despesa";
   };
@@ -38,9 +38,9 @@ export default function UpdateTransactions({
 }: UpdateTransactionsProps) {
   const [transaction, setTransaction] = useState<Transaction | null>(null);
   const [description, setDescription] = useState("");
-  const [amount, setAmount] = useState("");
+  const [amount, setAmount] = useState<number | "">("");
   const [categories, setCategories] = useState<Category[]>([]);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | "">(""); // Alterado para string
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | "">("");
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [transactionType, setTransactionType] = useState<"receita" | "despesa">("receita");
   const router = useRouter();
@@ -84,7 +84,7 @@ export default function UpdateTransactions({
           setTransaction(apiData.data);
           setSelectedCategoryId(apiData.data.category.id);
           setDescription(apiData.data.description);
-          setAmount(`${apiData.data.amount}`);
+          setAmount(apiData.data.amount);
           setTransactionType(apiData.data.type);
           setSelectedDate(new Date(apiData.data.date));
         } else {
@@ -117,6 +117,11 @@ export default function UpdateTransactions({
     setSelectedDate(date);
   };
 
+  const handleAmountChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    const value = ev.target.value;
+    setAmount(value === "" ? "" : parseFloat(value));
+  };
+
   const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
 
@@ -128,7 +133,7 @@ export default function UpdateTransactions({
     const updatedTransaction = {
       id: transactionId,
       description,
-      amount: Number(amount),
+      amount: typeof amount === "number" ? amount : parseFloat(amount),
       type: transactionType,
       date: selectedDate,
       idCategory: selectedCategoryId,
@@ -205,11 +210,12 @@ export default function UpdateTransactions({
             <input
               type="number"
               min={0}
+              step="0.01"
               name="amount"
               placeholder="Valor da transação"
               className="bg-transparent text-lg placeholder-zinc-400 w-40 outline-none flex-1"
-              onChange={(ev) => setAmount(ev.target.value)}
-              value={amount}
+              onChange={handleAmountChange}
+              value={amount === "" ? "" : amount}
               required
             />
           </div>

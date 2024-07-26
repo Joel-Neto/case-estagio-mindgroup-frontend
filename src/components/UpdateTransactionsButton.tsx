@@ -5,9 +5,9 @@ import React, { useState } from "react";
 import UpdateTransactions from "./UpdateTransactions";
 
 interface UpdateTransactionsProps {
-  transactionId: number;
+  transactionId: string;
   token: string;
-  userId: number
+  userId: string
 }
 
 export default function UpdateTransactionsButton({

@@ -14,7 +14,7 @@ interface ApiData {
 }
 
 interface Transaction {
-  id: number;
+  id: string;
   description: string;
   amount: number;
   type: "receita" | "despesa";
@@ -101,7 +101,7 @@ export default async function TransactionsTable() {
                     R$ {transaction.amount}
                   </td>
                   <td className="py-4 px-6 text-zinc-400 flex gap-2 whitespace-nowrap">
-                      <UpdateTransactionsButton transactionId={transaction.id} token={token as string} userId={userId as number}/>
+                      <UpdateTransactionsButton transactionId={transaction.id} token={token as string} userId={userId as string}/>
                     <DeleteTransactionButton transactionId={transaction.id} token={token as string}/>
                   </td>
                 </tr>

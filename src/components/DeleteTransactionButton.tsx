@@ -7,7 +7,7 @@ import React from "react";
 
 interface DeleteTransactionButtonProps {
   token: string;
-  transactionId: number;
+  transactionId: string;
 }
 
 export default function DeleteTransactionButton({

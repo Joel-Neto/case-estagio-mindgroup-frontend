@@ -3,6 +3,7 @@ import { HandCoins, User, User2 } from "lucide-react";
 import { getServerSession } from "next-auth";
 import React from "react";
 import LogoutButton from "./LogoutButton";
+import Image from "next/image";
 
 export default async function Header() {
   const session = await getServerSession(nextAuthOptions);
@@ -12,7 +13,8 @@ export default async function Header() {
     <>
       <div className="flex flex-col items-center gap-4 sm:flex-row">
         <div className="w-36 h-36 bg-zinc-800 rounded-full shadow-shape flex items-center justify-center sm:w-28 sm:h-28">
-          {!img ?<User className="size-8 text-zinc-400"/> : (<img src={img} className="w-32 h-32 rounded-full sm:w-24 sm:h-24" alt="Imagem"/>)}
+          {/* {!img ?<User className="size-8 text-zinc-400"/> : (<img src={img} className="w-32 h-32 rounded-full sm:w-24 sm:h-24" alt="Imagem"/>)} */}
+          {!img ?<User className="size-8 text-zinc-400"/> : <Image src={img} alt="Avatar img" className="w-32 h-32 rounded-full sm:w-24 sm:h-24" width={128} height={128}/>}
         </div>
         <p className="text-sm text-zinc-100 sm:text-lg">
           Seja bem-vindo(a), {session?.user.name}.

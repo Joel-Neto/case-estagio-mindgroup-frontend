@@ -13,7 +13,7 @@ interface CreateTransactionProps {
 }
 
 interface Category {
-  id: string; // Altere para string para UUID
+  id: string;
   nome: string;
   tipo: "receita" | "despesa";
 }
@@ -43,7 +43,6 @@ export default function CreateTransaction({
         });
         if (response.ok) {
           const apiData = await response.json();
-          console.log("Categorias recebidas:", apiData.data); // Adicione este log
           setCategories(apiData.data);
         } else {
           if (response.status === 401) {
@@ -71,8 +70,7 @@ export default function CreateTransaction({
   };
 
   const handleCategoryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = event.target.value;
-    setSelectedCategoryId(value === "" ? "" : value);
+    setSelectedCategoryId(event.target.value);
   };
 
   const handleTransactionTypeChange = (type: "receita" | "despesa") => {
@@ -81,6 +79,10 @@ export default function CreateTransaction({
 
   const handleDateChange = (date: Date | null) => {
     setSelectedDate(date);
+  };
+
+  const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAmount(event.target.value);
   };
 
   const handleSubmit = async (event: SyntheticEvent) => {
@@ -93,7 +95,7 @@ export default function CreateTransaction({
 
     const transaction = {
       description,
-      amount: Number(amount),
+      amount: parseFloat(amount),
       type: transactionType,
       date: selectedDate,
       idCategory: selectedCategoryId,
@@ -114,6 +116,10 @@ export default function CreateTransaction({
         if (form.current) {
           form.current.reset();
           setSelectedDate(null);
+          setAmount("");
+          setDescription("");
+          setSelectedCategoryId("");
+          setTransactionType("receita");
         }
         alert(apiData.message);
         window.location.reload();
@@ -168,6 +174,7 @@ export default function CreateTransaction({
                   name="description"
                   placeholder="Descrição da transação"
                   className="bg-transparent text-lg placeholder-zinc-400 w-40 outline-none flex-1"
+                  value={description}
                   onChange={(ev) => setDescription(ev.target.value)}
                   required
                 />
@@ -178,10 +185,12 @@ export default function CreateTransaction({
                 <input
                   type="number"
                   min={0}
+                  step="0.01"
                   name="amount"
                   placeholder="Valor da transação"
                   className="bg-transparent text-lg placeholder-zinc-400 w-40 outline-none flex-1"
-                  onChange={(ev) => setAmount(ev.target.value)}
+                  value={amount}
+                  onChange={handleAmountChange}
                   required
                 />
               </div>
@@ -190,7 +199,7 @@ export default function CreateTransaction({
                 <List className="ml-1 text-zinc-400 size-5" />
                 <select
                   name="category"
-                  value={selectedCategoryId || ""}
+                  value={selectedCategoryId}
                   onChange={handleCategoryChange}
                   className="bg-zinc-950 text-zinc-400 text-lg placeholder-zinc-400 w-40 outline-none flex-1 rounded-lg"
                   required

@@ -5,6 +5,7 @@ import React from "react";
 import TransactionsTable from "./TransactionsTable";
 import { getServerSession } from "next-auth";
 import { nextAuthOptions } from "@/app/api/auth/[...nextauth]/route";
+import TransactionsTableWithFilter from "./TransactionsTableWithFilter";
 
 const getTotalAmount = async (token: string) => {
   try {
@@ -38,6 +39,7 @@ const getTotalAmount = async (token: string) => {
 export default async function ShowTransactionsData() {
   const session = await getServerSession(nextAuthOptions);
   const token = session?.token;
+  const userId = session?.user.id
   const { data } = await getTotalAmount(token as string);
 
   return (
@@ -54,7 +56,8 @@ export default async function ShowTransactionsData() {
         </div>
       </div>
 
-      <TransactionsTable />
+      {/* <TransactionsTable /> */}
+      <TransactionsTableWithFilter token={token as string} userId={userId as string}/>
     </main>
   );
 }
